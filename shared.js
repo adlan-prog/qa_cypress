@@ -21,11 +21,15 @@ export function login() {
 export function addArticle() {
 
     // open editor
+    
+    // 2. issue need to check ```cy.get('article-list').should('be.visible');```
+    
     cy.get('@appHeader').find('[ui-sref$="editor"]').click();
     cy.url().should('include', '/#/editor/');
     cy.get('.editor-page form').should('be.visible').as('articleForm');
 
-    const article = generateFakeArticle();
+    const article = generateFakeArticle(); // 3 issue. this const should be showing like global const here,
+                                           // need delete const from here and type like global
 
     // fill form
     cy.get('@articleForm').find('input[ng-model$="title"]').type(article.title);
@@ -41,7 +45,7 @@ export function addArticle() {
 
 export function checkMyArticles() {
 
-    const article = generateFakeArticle();
+    const article = generateFakeArticle(); // here is same problem
 
     cy.url().should('include', '/#/', article.title);
     cy.get('.article-page h1[ng-bind$="title"]').should('contain.value', article.title);
