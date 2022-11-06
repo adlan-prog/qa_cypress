@@ -24,7 +24,7 @@ describe('Articles', () => {
 
     });
 
-    it('should do publish article', () => {
+    it.only('should do publish article', () => {
 
         // publishArticle
         addArticle();
@@ -34,7 +34,7 @@ describe('Articles', () => {
     });
 
 
-    it.only('should do  delete article'), () => {
+    it('should do  delete article'), () => {
 
         // addArticle
         addArticle();
