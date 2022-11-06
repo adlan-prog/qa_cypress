@@ -5,7 +5,7 @@ import { addArticle } from "../support/shared";
 import { checkMyArticles } from "../support/shared";
 import { faker } from '@faker-js/faker';
 
-
+// **1. issue / here is no need this function , and that's why no need faker,js**
 export function generateFakeArticle() {
     return {
         title: faker.lorem.words(6),
@@ -14,6 +14,8 @@ export function generateFakeArticle() {
         tags: faker.lorem.words(3)
     };
 }
+
+ 
 
 describe('Articles', () => {
 
