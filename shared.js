@@ -2,16 +2,6 @@ import meUser from '/cypress/fixtures/me-user.json';
 import { generateFakeArticle } from '../integration/article.spec';
 
 
-
-export function generateFakeArticle() {
-    return {
-        title: faker.lorem.words(6),
-        description: faker.lorem.sentence(20),
-        body: faker.lorem.text(300),
-        tags: faker.lorem.words(3)
-    };
-}
-
 export function login() {
 
     cy.get('@appHeader').find('a[href$="/login"]').click();
@@ -28,8 +18,9 @@ export function login() {
 
 };
 
-export function addArticle() { 
+export function addArticle() {
 
+    // open editor
     cy.get('@appHeader').find('[ui-sref$="editor"]').click();
     cy.url().should('include', '/#/editor/');
     cy.get('.editor-page form').should('be.visible').as('articleForm');
@@ -45,9 +36,17 @@ export function addArticle() {
     // save article
     cy.get('@articleForm').find('button').click();
 
-    cy.get('.article-page').should('be.visible');
-
-    return article
-
 };
+
+
+export function checkMyArticles() {
+
+    const article = generateFakeArticle();
+
+    cy.url().should('include', '/#/', article.title);
+    cy.get('.article-page h1[ng-bind$="title"]').should('contain.value', article.title);
+    cy.get('.article-content [ng-bind-html$="article.body"]').should('contain.value', article.body);
+    cy.get('.article-content [ng-repeat$="tagList"]').should('contain.value', article.tags);
+
+}
 
