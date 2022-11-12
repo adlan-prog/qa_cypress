@@ -1,6 +1,7 @@
-import meUser from '/cypress/fixtures/me-user.json';
-import { generateFakeArticle } from '../integration/article.spec';
+import meUser from '../fixtures/me-user.json';
+import { generateFakeArticle } from '../../js_examples/faker.mjs';
 
+const article = generateFakeArticle();
 
 export function login() {
 
@@ -21,15 +22,10 @@ export function login() {
 export function addArticle() {
 
     // open editor
-    
-    // 2. issue need to check ```cy.get('article-list').should('be.visible');```
-    
+
     cy.get('@appHeader').find('[ui-sref$="editor"]').click();
     cy.url().should('include', '/#/editor/');
     cy.get('.editor-page form').should('be.visible').as('articleForm');
-
-    const article = generateFakeArticle(); // 3 issue. this const should be showing like global const here,
-                                           // need delete const from here and type like global
 
     // fill form
     cy.get('@articleForm').find('input[ng-model$="title"]').type(article.title);
@@ -42,15 +38,45 @@ export function addArticle() {
 
 };
 
-
 export function checkMyArticles() {
+    cy.url().should('include', '/#/article/', article.title);
+    cy.get('.article-page h1[ng-bind$="title"]').should('contain.text', article.title);
+    cy.get('.article-content [ng-bind-html$="article.body"]').should('contain.text', article.body);
+    cy.get('.article-content [ng-repeat$="tagList"]').should('contain.text', article.tags);
 
-    const article = generateFakeArticle(); // here is same problem
+};
 
-    cy.url().should('include', '/#/', article.title);
-    cy.get('.article-page h1[ng-bind$="title"]').should('contain.value', article.title);
-    cy.get('.article-content [ng-bind-html$="article.body"]').should('contain.value', article.body);
-    cy.get('.article-content [ng-repeat$="tagList"]').should('contain.value', article.tags);
+export function fillForm() {
+    cy.get('.editor-page form').should('be.visible').as('articleForm');
 
-}
+    // fill form
+    cy.get('@articleForm').find('input[ng-model$="title"]').type(article.title);
+    cy.get('@articleForm').find('input[ng-model$="description"]').type(article.description);
+    cy.get('@articleForm').find('textarea[ng-model$="body"]').type(article.body);
+    cy.get('@articleForm').find('input[ng-model$="tagField"]').type(article.tags).type('{enter}');
+    cy.get('@articleForm').find('button').click();
+};
 
+export function openMyArticles() {
+
+    cy.get('.navbar a[ui-sref*=profile]').click();
+
+    cy.url().should('include', meUser.username);
+
+    cy.get('.articles-toggle').contains('My Articles')
+        .parents('li').should('be.visible');
+
+    cy.get('article-preview:first-of-type [ng-bind$="article.title"]').click();
+
+};
+
+export function clearArticle() {
+
+    cy.get('.editor-page form').should('be.visible').as('editForm');
+
+    cy.get('@editForm').find('input[ng-model$="title"]').clear();
+    cy.get('@editForm').find('[ng-model$="description"]').clear();
+    cy.get('@editForm').find('[ng-model$="body"]').clear();
+    cy.get('@editForm').find('[ng-click$="removeTag(tag)"]').click();
+
+};
